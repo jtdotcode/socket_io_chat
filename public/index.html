@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Socket.IO chat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="grid-container">
+    <div class="sidebar">
+      <div class=sidebar-header-text><strong>Users Online</strong></div>
+      <ul id="users-online"></ul>
+    </div>
+    <div class="chat-window">
+      <div id="chat-window-header">
+        <div id="result"></div> Active Now | <span class="dot"></span>
+      </div>
+      <ul id="messages"></ul>
+    </div>
+    <div class="chat-text-form">
+      <form action="">
+        <input id="m" autocomplete="off" /><button>Send</button>
+      </form>
+    </div>
+    <div class="private-msg">
+      <div id="result" style="background: yellow;"></div>
+    </div>
+
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script>
+    if (!userName) { var userName = prompt("Please enter your name:", "Anonymous"); };
+    if (userName == null || userName == "") {
+      userName = 'Anonymous';
+    }
+
+    
+
+
+    $(function () {
+
+      var idlefunction = function () {
+        $('.dot').css("background-color", "red");
+        
+      }, idletimer,
+        idlestart = function () { idletimer = setTimeout(idlefunction, 20000); },
+        idlebreak = function () {
+          clearTimeout(idletimer); idlestart();
+          $('.dot').css("background-color", "rgb(8, 238, 19)");
+          
+        };
+      if (window.addEventListener) { document.documentElement.addEventListener("mousemove", idlebreak, true); }
+
+      else { document.documentElement.attachEvent("onmousemove", idlebreak, true) };
+    
+
+
+    
+    $('#chat-window-header').append($('<h1>').text(userName));
+    var socket = io();
+    socket.emit('user name', userName);
+    $('form').submit(function (e) {
+      e.preventDefault(); // prevents page reloading
+
+      if ($('form button').html() === 'Send') {
+        socket.emit('chat message', `${userName}: ${$('#m').val()}`);
+
+      } else if ($('form button').html() === 'Send PM') {
+        socket.emit('pm chat message',
+          {
+            message: $('#m').val(),
+            users: checkedId
+          });
+
+      };
+
+      $('#m').val('');
+      
+
+      return false;
+    });
+    socket.on('chat message', function (msg) {
+      $('#messages').append($('<li>').text(msg));
+    });
+
+    socket.on('chat message connection', function (msg) {
+      $('#messages').append($(`<li id="connection-message">`).text(msg));
+    });
+
+    socket.on('pm chat message', function (msg) {
+      $('#messages').append($('<li>').text(`${userName}:${msg}`));
+    });
+
+    socket.on('user name', function (msg) {
+
+      $('#users-online').empty();
+
+      for (const [key, value] of Object.entries(msg)) {
+
+        if (value === userName) {
+          $('#users-online').append($(`<li data-id="${key}">`).text(`Me:${value}`));
+
+        } else {
+          $('#users-online').append($(`<li data-id="${key}">`).text(value));
+
+
+        };
+
+
+      };
+
+      $('#users-online li').each(function (index) {
+
+        // console.log( `${index}:${$(this).text()}`);
+
+        const $checkbox = $('<input type="checkbox"/>');
+
+        if (!$(this).has('input[type=checkbox]').length) {
+          // console.log('contains checkbox', $(this));
+
+          if ($(this).text() != `Me:${userName}`) {
+            console.log(`${$(this).text()}`);
+            $(this).prepend($checkbox);
+          };
+        };
+
+      });
+
+      checkedId = [];
+
+
+      $('#users-online li input[type="checkbox"]').click(function () {
+        if ($(this).is(":checked")) {
+          console.log('checked', $(this));
+          console.log($(this).parent().attr("data-id"));
+          // checkedId[$(this).parent().attr("data-id")] = $(this).parent().text();
+          if (!checkedId.includes($(this).parent().attr("data-id"))) checkedId.push($(this).parent().attr("data-id"));
+          $('form button').html('Send PM');
+          $('form button').css("background-color", "red");
+        }
+        else if ($(this).is(":not(:checked)")) {
+          console.log('not checked');
+          $('form button').html('Send');
+          $('form button').css("background-color", "lightblue");
+        }
+      });
+
+
+    });
+
+        
+      });
+
+
+  </script>
+</body>
+
+</html>
