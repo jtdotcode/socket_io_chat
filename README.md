@@ -1,4 +1,4 @@
-# JSNode SocketIT chat test
+# JSNode SocketIO chat test
 
 ## Purpose
 
