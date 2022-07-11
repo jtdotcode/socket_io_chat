@@ -15,6 +15,6 @@ Private Message.
 
 Basic UI just for proof of concept.
 
-![alt text](https://github.com/jtdotcode/socket_io_chat/images/jim.jpg?raw=true)
+![alt text](https://github.com/jtdotcode/socket_io_chat/blob/master/images/james.JPG?raw=true)
 
-![alt text](https://github.com/jtdotcode/socket_io_chat/images/james.jpg?raw=true)
+![alt text](https://github.com/jtdotcode/socket_io_chat/blob/master/images/jim.JPG?raw=true)
