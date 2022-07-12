@@ -1,4 +1,4 @@
-# JSNode SocketIO chat test
+# SocketIO chat test
 
 ## Purpose
 
@@ -6,10 +6,10 @@ Create a basic chat server/client website with nodejs, jquery, express and socke
 
 ## Features
 
-Server/Client  
-Chat interface with, active, idle and sleep icons
-Select Users
-Private Message.
+* Server/Client  
+* Chat interface with, active, idle and sleep icons
+* Select Users
+* Private Message
 
 ## Design
 
